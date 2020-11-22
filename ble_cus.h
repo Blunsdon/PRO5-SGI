@@ -29,12 +29,10 @@
 #define EMPTY_VALUE_CHAR_UUID             0x4201  
 // load characteristic uuid
 #define LOAD_VALUE_CHAR_UUID              0x4202 
-// get loaded weight characteristic uuid
-#define GETLOAD_VALUE_CHAR_UUID           0x4203 
 // get weight characteristic uuid
-#define GET_VALUE_CHAR_UUID               0x4204 
+#define GET_VALUE_CHAR_UUID               0x4203 
 // calibration characteristic uuid
-#define CALI_VALUE_CHAR_UUID              0x4205 
+#define CALI_VALUE_CHAR_UUID              0x4204 
 // define value for load
 static uint32_t current_load = 0x00000000;
 
@@ -52,7 +50,6 @@ NRF_SDH_BLE_OBSERVER(_name ## _obs,                \
                      BLE_HRS_BLE_OBSERVER_PRIO,    \
                      ble_cus_on_ble_evt, &_name)
 
- 
 /**@brief Custom Service init structure. 
  *        This contains all options and data needed for
  *        initialization of the service.*/
@@ -64,14 +61,11 @@ typedef struct
     ble_srv_cccd_security_mode_t  cali_value_char_attr_md;
     //Initial security level for get weight attribute
     ble_srv_cccd_security_mode_t  get_value_char_attr_md;
-    //Initial security level for get loaded weight attribute
-    ble_srv_cccd_security_mode_t  getload_value_char_attr_md;
     //Initial security level for load attribute
     ble_srv_cccd_security_mode_t  load_value_char_attr_md;
     //Initial security level for empty attribute
     ble_srv_cccd_security_mode_t  empty_value_char_attr_md;
 } ble_cus_init_t;
-
 
 /**@brief Custom Service structure. 
  * This contains various status information for the service. */
@@ -83,8 +77,6 @@ struct ble_cus_s
     ble_gatts_char_handles_t      cali_value_handles;
     // Handles get weight characteristic.
     ble_gatts_char_handles_t      get_value_handles;
-    //Handles get loaded weight characteristic.
-    ble_gatts_char_handles_t      getload_value_handles;
     //Handles load characteristic.
     ble_gatts_char_handles_t      load_value_handles;
     //Handles empty characteristic.
@@ -94,7 +86,6 @@ struct ble_cus_s
     uint16_t                      conn_handle; 
     uint8_t                       uuid_type; 
 };
-
 
 /**@brief Function for initializing the Custom Service.
  *
@@ -107,7 +98,6 @@ struct ble_cus_s
  */
 uint32_t ble_cus_init(ble_cus_t * p_cus, const ble_cus_init_t * p_cus_init);
 
-
 /**@brief Function for handling the Application's BLE Stack events.
  *
  * @details Handles all events from the BLE stack.
@@ -118,8 +108,5 @@ uint32_t ble_cus_init(ble_cus_t * p_cus, const ble_cus_init_t * p_cus_init);
  * @param[in]   p_context  Custom Service structure.
  */
 void ble_cus_on_ble_evt( ble_evt_t const * p_ble_evt, void * p_context);
-
-
-
 
 #endif //BLE_CUS_H
