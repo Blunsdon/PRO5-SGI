@@ -5,7 +5,7 @@
  * Version     : 1.0
  * Created on  : 31 Oct 2020
  * Copyright   : Open for all
- * Description : Source file with set up for ble service characteristic:
+ * Description : Source file with setup for ble service characteristic:
  *                - Calibatration
  *                - Get weight
  *                - Get load
@@ -17,21 +17,19 @@
  *               example code.
  * =========================================================================== 
  */
-
-#include "sdk_common.h"
-#include "ble_srv_common.h"
-#include "ble_cus.h"
 #include <string.h>
 #include <stdio.h>
-#include "nrf_gpio.h"
-#include "boards.h"
-#include "nrf_log.h"
 
+#include "sdk_common.h"
+#include "boards.h"
+#include "ble_srv_common.h"
+#include "ble_cus.h"
+#include "nrf_log.h"
+#include "nrf_log_ctrl.h" // for float print
+#include "nrf_gpio.h"
 #include "nrf_delay.h"
-//#include "saadc.h"
 #include "nrf_drv_saadc.h"
-//#include "nrf_drv_ppi.h"
-//#include "nrf_drv_timer.h"
+
 
 /**@brief Function for adding the Calibration characteristic.
  *
@@ -84,7 +82,7 @@ static uint32_t cali_value_char_add(ble_cus_t * p_cus,
     attr_char_value.init_offs   = 0;
     attr_char_value.max_len     = 4;
     attr_char_value.init_len    = 4;
-    uint8_t value[4]            = {0x39,0x39,0x39,0x39};
+    uint8_t value[4]            = {0x00,0x00,0x00,0x00};
     attr_char_value.p_value     = value;
     // Add our characteristic
     err_code = sd_ble_gatts_characteristic_add(p_cus->service_handle, 
@@ -151,8 +149,10 @@ static uint32_t get_weight_char_add(ble_cus_t * p_cus,
     attr_char_value.init_offs   = 0;
     attr_char_value.max_len     = 4;
     attr_char_value.init_len    = 4;
-    uint8_t value[4]            = {0x39,0x39,0x39,0x39};
+    uint8_t value[4]            = {0x00,0x00,0x00,0x00};
     attr_char_value.p_value     = value;
+    // Configure pin31 as OUTPUT Pin
+    nrf_gpio_cfg_output(pin31);
     // Add our characteristic
     err_code = sd_ble_gatts_characteristic_add(p_cus->service_handle, 
                                                &char_md,
@@ -188,7 +188,7 @@ static uint32_t load_weight_char_add(ble_cus_t * p_cus,
     // Sets what will be displayed to the central during service discovery
     memset(&char_md, 0, sizeof(char_md));
     // Only write permission
-    char_md.char_props.read   = 0;
+    char_md.char_props.read   = 1;
     char_md.char_props.write  = 1;
     char_md.char_props.notify = 0; 
     char_md.p_char_user_desc  = NULL;
@@ -216,7 +216,7 @@ static uint32_t load_weight_char_add(ble_cus_t * p_cus,
     // Sets size of the characteristic
     attr_char_value.max_len     = 4;
     attr_char_value.init_len    = 4;
-    uint8_t value[4]            = {0x39,0x39,0x39,0x39};
+    uint8_t value[4]            = {0x00,0x00,0x00,0x00};
     attr_char_value.p_value     = value;
     attr_char_value.init_offs   = 0;
     // Add our characteristic
@@ -496,21 +496,20 @@ static void get_weight(ble_cus_t * p_cus, ble_evt_t const * p_ble_evt)
     {
       // Init value to 0
       uint32_t m_custom_value = 0x00000000;
-      //NOTE: turn on the amplifer
-      // Wait for Rise time is done 
-      nrf_delay_us(100);
+      //turn on the the extern HW circuit
+      nrf_gpio_pin_set(pin31);
+      // Wait for Rise time is done 20 ms
+      nrf_delay_ms(20);
       // Converting 
       // Channel 0 is enabled
       // adc_val is saved in Channel 0
       nrfx_saadc_sample_convert(0, &adc_val);
-      //NOTE: turn off the amplifer
-      // Prompt adc_val to user
-      NRF_LOG_INFO("Sample value read:  %d", adc_val);
-      NRF_LOG_INFO("Update new value for get weight. \r\n");
+      //turn off the extern HW circuit
+      nrf_gpio_pin_clear(pin31);
       // Update the value
       m_custom_value = adc_val;
-      NRF_LOG_INFO("m_custom value set:  %x", m_custom_value);
       err_code = ble_cus_get_value_update(p_cus, m_custom_value);
+      
       // error check
       APP_ERROR_CHECK(err_code);
     }

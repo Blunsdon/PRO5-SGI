@@ -15,11 +15,8 @@
 
 nrf_saadc_value_t adc_val;
 
-
 void saadc_init(void);
 
 void saadc_callback_handler(nrf_drv_saadc_evt_t const * p_event) ;
-
-
 
 #endif //SAADC_H

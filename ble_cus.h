@@ -33,7 +33,11 @@
 #define GET_VALUE_CHAR_UUID               0x4203 
 // calibration characteristic uuid
 #define CALI_VALUE_CHAR_UUID              0x4204 
-// define value for load
+
+//define pin for P0.31 (circuit turn on/off) 
+#define pin31 31
+
+// define value for load init to 0
 static uint32_t current_load = 0x00000000;
 
 // Forward declaration of the ble_cus_t type.
