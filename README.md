@@ -2,5 +2,5 @@
 Projekt 5, app styret strain gauge interface
 
 # Template
-The file template.c is made by Nordic Semicondutor and was the base for the rest of the program 
-the file template.c is NOT used it is only there as reference.
+Filen template.c er lavet af Nordic Semicondutor og var brugt til at starte ud fra.
+Filen template.c er ikke en del af programmet, den er der blot som reference.
