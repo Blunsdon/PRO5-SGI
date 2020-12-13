@@ -8,7 +8,6 @@
  * Description : Source file with setup for ble service characteristic:
  *                - Calibatration
  *                - Get weight
- *                - Get load
  *                - Load
  *                - Empty
  *               And event handle set up for the characteristic
